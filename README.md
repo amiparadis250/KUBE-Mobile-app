@@ -1,4 +1,5 @@
 # KUBE Mobile App
+![WhatsApp Image 2026-02-22 at 2 32 23 PM](https://github.com/user-attachments/assets/d85d56f7-7db1-4dbb-b912-ce8807bd4baf)
 
 Flutter mobile application for the KUBE Aerial Intelligence Platform.
 
