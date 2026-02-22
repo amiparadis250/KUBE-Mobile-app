@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../auth_provider.dart';
-import 'login_screen.dart';
-import 'dashboard_screen.dart';
+import 'features/home/presentation/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,21 +12,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    _navigateToHome();
   }
 
-  _checkAuth() async {
-    await Future.delayed(const Duration(seconds: 2));
+  _navigateToHome() async {
+    await Future.delayed(const Duration(seconds: 5));
     if (mounted) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.checkAuthStatus();
-      
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => authProvider.isAuthenticated 
-            ? const DashboardScreen() 
-            : const LoginScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
   }
@@ -46,38 +36,17 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF2872A1), Color(0xFF00AAFF)],
-                ),
+                gradient: const LinearGradient(colors: [Color(0xFF2872A1), Color(0xFF00AAFF)]),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: const Icon(
-                Icons.satellite_alt,
-                size: 60,
-                color: Colors.white,
-              ),
+              child: const Icon(Icons.satellite_alt, size: 60, color: Colors.white),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'KUBE',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            const Text('KUBE', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
             const SizedBox(height: 8),
-            const Text(
-              'Aerial Intelligence Platform',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white70,
-              ),
-            ),
+            const Text('Aerial Intelligence Platform', style: TextStyle(fontSize: 16, color: Colors.white70)),
             const SizedBox(height: 40),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00AAFF)),
-            ),
+            const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00AAFF))),
           ],
         ),
       ),

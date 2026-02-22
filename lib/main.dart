@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/home_controller.dart';
-import 'features/home/presentation/home_screen.dart';
+import 'splash_screen.dart';
 
 void main() {
   runApp(const KubeApp());
@@ -20,7 +20,7 @@ class KubeApp extends StatelessWidget {
       child: MaterialApp(
         title: 'KUBE - Aerial Intelligence',
         theme: AppTheme.darkTheme,
-        home: const HomeScreen(),
+        home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );
