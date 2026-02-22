@@ -150,18 +150,18 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(herd['name']!, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                    Text(herd['name'] as String, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
                     Text('${herd['count']} ${herd['type']}', style: const TextStyle(color: Colors.white70, fontSize: 10)),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    _StatusDot(color: const Color(0xFF00CC66), count: herd['healthy']!, label: 'Healthy'),
+                    _StatusDot(color: const Color(0xFF00CC66), count: herd['healthy'] as int, label: 'Healthy'),
                     const SizedBox(width: 12),
-                    _StatusDot(color: const Color(0xFFFF3366), count: herd['sick']!, label: 'Sick'),
+                    _StatusDot(color: const Color(0xFFFF3366), count: herd['sick'] as int, label: 'Sick'),
                     const SizedBox(width: 12),
-                    _StatusDot(color: const Color(0xFFFFAA00), count: herd['missing']!, label: 'Missing'),
+                    _StatusDot(color: const Color(0xFFFFAA00), count: herd['missing'] as int, label: 'Missing'),
                   ],
                 ),
               ],
