@@ -3,6 +3,14 @@ import 'package:provider/provider.dart';
 import '../home_controller.dart';
 import '../../auth/auth_controller.dart';
 import '../../auth/presentation/login_screen.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../farm/presentation/farm_dashboard.dart';
+import '../../park/presentation/park_dashboard.dart';
+import '../../land/presentation/land_dashboard.dart';
+import '../../../shared/widgets/notification_bell.dart';
+import '../../../shared/widgets/settings_screen.dart';
+import '../../../shared/widgets/offline_indicator.dart';
+import '../../../shared/widgets/map_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -26,6 +34,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final authController = Provider.of<AuthController>(context);
     final user = authController.user;
+    final currentService = authController.currentService;
+
+    String title;
+    switch (currentService) {
+      case ServiceType.farm:
+        title = 'KUBE-Farm';
+        break;
+      case ServiceType.park:
+        title = 'KUBE-Park';
+        break;
+      case ServiceType.land:
+        title = 'KUBE-Land';
+        break;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -41,26 +63,68 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: const Icon(Icons.satellite_alt, size: 20, color: Colors.white),
             ),
             const SizedBox(width: 12),
-            const Text('KUBE Command Center'),
+            Text(title),
           ],
         ),
         actions: [
+          const NotificationBell(),
+          if (user != null && user.services.length > 1)
+            PopupMenuButton<ServiceType>(
+              icon: const Icon(Icons.apps),
+              onSelected: (service) => authController.switchService(service),
+              itemBuilder: (context) => ServiceType.values
+                  .where((s) => user.services.contains(s))
+                  .map((service) => PopupMenuEntry<ServiceType>(
+                        value: service,
+                        child: PopupMenuItem<ServiceType>(
+                          value: service,
+                          child: Row(
+                            children: [
+                              Icon(
+                                service == ServiceType.farm
+                                    ? Icons.agriculture
+                                    : service == ServiceType.park
+                                        ? Icons.park
+                                        : Icons.landscape,
+                                size: 16,
+                                color: currentService == service ? const Color(0xFF00AAFF) : Colors.white70,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'KUBE-${service.name[0].toUpperCase()}${service.name.substring(1)}',
+                                style: TextStyle(
+                                  color: currentService == service ? const Color(0xFF00AAFF) : Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            ),
+          ),
           PopupMenuButton(
             child: CircleAvatar(
               backgroundColor: const Color(0xFF2872A1),
               child: Text(
-                user != null ? '${user['firstName'][0]}${user['lastName'][0]}' : 'U',
+                user?.initials ?? 'U',
                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
             itemBuilder: (context) => <PopupMenuEntry>[
               PopupMenuItem(
                 enabled: false,
-                child: Text('${user?['firstName']} ${user?['lastName']}'),
+                child: Text(user?.fullName ?? 'User'),
               ),
               PopupMenuItem(
                 enabled: false,
-                child: Text('Role: ${user?['role']}'),
+                child: Text('Role: ${user?.role.name ?? "Unknown"}'),
               ),
               const PopupMenuDivider(),
               PopupMenuItem(
@@ -85,153 +149,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(width: 16),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: const [
-          _OverviewTab(),
-          _FarmTab(),
-          _ParkTab(),
-          _MapTab(),
+      body: Column(
+        children: [
+          const OfflineIndicator(),
+          Expanded(child: _selectedIndex == 3 ? const MapScreen() : _buildDashboard(currentService)),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF0A1628),
-        selectedItemColor: const Color(0xFF00AAFF),
-        unselectedItemColor: Colors.white54,
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Overview'),
-          BottomNavigationBarItem(icon: Icon(Icons.agriculture), label: 'Farm'),
-          BottomNavigationBarItem(icon: Icon(Icons.park), label: 'Park'),
+      bottomNavigationBar: _buildBottomNav(currentService),
+    );
+  }
+
+  Widget _buildDashboard(ServiceType service) {
+    switch (service) {
+      case ServiceType.farm:
+        return const FarmDashboard();
+      case ServiceType.park:
+        return const ParkDashboard();
+      case ServiceType.land:
+        return const LandDashboard();
+    }
+  }
+
+  BottomNavigationBar? _buildBottomNav(ServiceType service) {
+    List<BottomNavigationBarItem> items;
+    switch (service) {
+      case ServiceType.farm:
+        items = const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Herds'),
+          BottomNavigationBarItem(icon: Icon(Icons.health_and_safety), label: 'Health'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-        ],
-      ),
-    );
-  }
-}
+        ];
+        break;
+      case ServiceType.park:
+        items = const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.security), label: 'Patrols'),
+          BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Wildlife'),
+          BottomNavigationBarItem(icon: Icon(Icons.report), label: 'Incidents'),
+        ];
+        break;
+      case ServiceType.land:
+        items = const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.landscape), label: 'Zones'),
+          BottomNavigationBarItem(icon: Icon(Icons.eco), label: 'Vegetation'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+        ];
+        break;
+    }
 
-class _OverviewTab extends StatelessWidget {
-  const _OverviewTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<HomeController>(
-      builder: (context, controller, child) {
-        if (controller.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('System Status', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-              const SizedBox(height: 16),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  _StatCard(title: 'Active Drones', value: '8', color: const Color(0xFF00CC66)),
-                  _StatCard(title: 'Farms Monitored', value: '12', color: const Color(0xFF2872A1)),
-                  _StatCard(title: 'Wildlife Parks', value: '3', color: const Color(0xFF00AAFF)),
-                  _StatCard(title: 'Active Alerts', value: '2', color: const Color(0xFFFF3366)),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _FarmTab extends StatelessWidget {
-  const _FarmTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.agriculture, size: 64, color: Color(0xFF00CC66)),
-          SizedBox(height: 16),
-          Text('KUBE-Farm', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-          Text('Livestock Intelligence', style: TextStyle(color: Colors.white70)),
-        ],
-      ),
-    );
-  }
-}
-
-class _ParkTab extends StatelessWidget {
-  const _ParkTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.park, size: 64, color: Color(0xFF00AAFF)),
-          SizedBox(height: 16),
-          Text('KUBE-Park', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-          Text('Wildlife Protection', style: TextStyle(color: Colors.white70)),
-        ],
-      ),
-    );
-  }
-}
-
-class _MapTab extends StatelessWidget {
-  const _MapTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.map, size: 64, color: Color(0xFFFFAA00)),
-          SizedBox(height: 16),
-          Text('Aerial Command', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-          Text('Live Map View', style: TextStyle(color: Colors.white70)),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-
-  const _StatCard({required this.title, required this.value, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0A1628),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-        ],
-      ),
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: const Color(0xFF0A1628),
+      selectedItemColor: const Color(0xFF00AAFF),
+      unselectedItemColor: Colors.white54,
+      currentIndex: _selectedIndex,
+      onTap: (index) => setState(() => _selectedIndex = index),
+      items: items,
     );
   }
 }

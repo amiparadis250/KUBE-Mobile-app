@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../home_controller.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => context.read<HomeController>().loadDashboardData());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,23 +38,32 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildStatsGrid(),
-            const SizedBox(height: 16),
-            _buildAlertsSection(),
-            const SizedBox(height: 16),
-            _buildFarmSection(),
-          ],
-        ),
+      body: Consumer<HomeController>(
+        builder: (context, controller, child) {
+          if (controller.isLoading) {
+            return const Center(child: CircularProgressIndicator(color: Color(0xFF00AAFF)));
+          }
+
+          final stats = controller.dashboardData?['stats'];
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildStatsGrid(stats),
+                const SizedBox(height: 16),
+                _buildAlertsSection(),
+                const SizedBox(height: 16),
+                _buildFarmSection(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildStatsGrid() {
+  Widget _buildStatsGrid(Map<String, dynamic>? stats) {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -50,19 +72,19 @@ class HomeScreen extends StatelessWidget {
       mainAxisSpacing: 12,
       childAspectRatio: 2,
       children: [
-        _StatCard(title: 'Animals Protected', value: '581', color: const Color(0xFF0066FF)),
-        _StatCard(title: 'Health Rate', value: '92.4%', color: const Color(0xFF00CC66)),
-        _StatCard(title: 'Active Alerts', value: '3', color: const Color(0xFFFF3366)),
-        _StatCard(title: 'Active Patrols', value: '2', color: const Color(0xFFFFAA00)),
+        _StatCard(title: 'Animals', value: '${stats?['animals'] ?? 0}', color: const Color(0xFF0066FF)),
+        _StatCard(title: 'Farms', value: '${stats?['farms'] ?? 0}', color: const Color(0xFF00CC66)),
+        _StatCard(title: 'Active Alerts', value: '${stats?['activeAlerts'] ?? 0}', color: const Color(0xFFFF3366)),
+        _StatCard(title: 'Parks', value: '${stats?['parks'] ?? 0}', color: const Color(0xFFFFAA00)),
       ],
     );
   }
 
   Widget _buildAlertsSection() {
     final alerts = [
-      {'title': 'Fever Detected in Multiple Animals', 'message': 'Thermal imaging detected elevated temperatures in 12 animals', 'severity': 'CRITICAL'},
-      {'title': 'Missing Animals Detected', 'message': '3 cattle not detected in last aerial survey', 'severity': 'WARNING'},
-      {'title': 'Pasture Degradation Warning', 'message': 'NDVI dropping below healthy threshold', 'severity': 'WARNING'},
+      {'title': 'Fever Detected in Multiple Animals', 'message': 'Thermal imaging detected elevated temperatures', 'severity': 'CRITICAL'},
+      {'title': 'Missing Animals Detected', 'message': '3 cattle not detected in last survey', 'severity': 'WARNING'},
+      {'title': 'Pasture Degradation Warning', 'message': 'NDVI dropping below threshold', 'severity': 'WARNING'},
     ];
 
     return Container(

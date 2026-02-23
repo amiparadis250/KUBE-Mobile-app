@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../auth_controller.dart';
-import '../../home/presentation/dashboard_screen.dart';
+import '../../../core/utils/api_service.dart';
+import '../../home/presentation/main_app_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -88,10 +89,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: authController.isLoading ? null : () async {
-                                final success = await authController.login(_emailController.text, _passwordController.text);
+                                final success = await authController.login(
+                                  _emailController.text.trim(),
+                                  _passwordController.text,
+                                );
                                 if (success && mounted) {
+                                  // Fetch profile to verify services
+                                  try {
+                                    final profileResponse = await ApiService.getProfile();
+                                    if (profileResponse['success']) {
+                                      authController.updateUserFromBackend(profileResponse['data']['user']);
+                                    }
+                                  } catch (e) {
+                                    // Profile fetch failed, but login succeeded
+                                  }
+                                  
                                   Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                                    MaterialPageRoute(builder: (context) => const MainAppScreen()),
+                                  );
+                                } else if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Login failed. Check credentials and network.'),
+                                      backgroundColor: Color(0xFFFF3366),
+                                      duration: Duration(seconds: 5),
+                                    ),
                                   );
                                 }
                               },
@@ -100,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: authController.isLoading
-                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
                                   : const Text('Initialize Session', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                             ),
                           );

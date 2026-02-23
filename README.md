@@ -1,14 +1,54 @@
 # KUBE Mobile App
-![WhatsApp Image 2026-02-22 at 2 32 23 PM](https://github.com/user-attachments/assets/d85d56f7-7db1-4dbb-b912-ce8807bd4baf)
 
-Flutter mobile application for the KUBE Aerial Intelligence Platform.
+Flutter mobile application for the KUBE Aerial Intelligence Platform with role-based dashboards.
+
+## Architecture
+
+The app supports three distinct user types with dedicated dashboards:
+
+### 🐄 KUBE-Farm (Farmers/Ranchers)
+- Herd management and tracking
+- Animal health monitoring
+- Pasture health analysis
+- Missing animal alerts
+
+### 🦁 KUBE-Park (Rangers/Conservationists)
+- Wildlife population tracking
+- Active patrol management
+- Incident reporting (poaching, fires)
+- Thermal patrol integration
+
+### 🌱 KUBE-Land (Land Managers/Environmentalists)
+- Land zone monitoring
+- Vegetation health analysis (NDVI)
+- Degradation tracking
+- Climate intelligence
+
+## Project Structure
+
+```
+lib/
+├── core/
+│   ├── constants/        # App constants, enums
+│   ├── theme/           # App theme
+│   └── utils/           # API service, helpers
+├── data/
+│   └── models/          # User model
+├── features/
+│   ├── auth/            # Authentication
+│   ├── farm/            # Farm dashboard
+│   ├── park/            # Park dashboard
+│   ├── land/            # Land dashboard
+│   └── home/            # Main navigation
+└── main.dart
+```
 
 ## Features
 
-- **Authentication**: Login with email/password
-- **Dashboard**: Real-time livestock, wildlife, and land monitoring
-- **Multi-module Support**: KUBE-Farm, KUBE-Park, KUBE-Land
+- **Role-Based Authentication**: Users assigned to Farm, Park, or Land services
+- **Service Switching**: Multi-service users can switch between dashboards
 - **Offline Support**: Works with cached data when offline
+- **Real-time Monitoring**: Live alerts and status updates
 
 ## Getting Started
 
@@ -31,6 +71,20 @@ Flutter mobile application for the KUBE Aerial Intelligence Platform.
 Update the API base URL in `lib/core/utils/api_service.dart`:
 ```dart
 static const String baseUrl = 'https://your-api-url.com/api';
+```
+
+## User Roles
+
+The backend should return user data with:
+```json
+{
+  "id": "user_id",
+  "email": "user@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "farmer|ranger|land_manager|admin",
+  "services": ["farm", "park", "land"]
+}
 ```
 
 ## Build for Production
