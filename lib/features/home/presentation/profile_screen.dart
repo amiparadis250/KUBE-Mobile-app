@@ -30,24 +30,25 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF2872A1), Color(0xFF00AAFF)]),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  user?.firstName.substring(0, 1).toUpperCase() ?? 'U',
-                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [Color(0xFF2872A1), Color(0xFF00AAFF)]),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    user?.firstName.substring(0, 1).toUpperCase() ?? 'U',
+                    style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
                 ),
               ),
-            ),
             const SizedBox(height: 16),
             Text(
               '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
@@ -119,6 +120,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: const Text('Logout', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
+            ),
             ),
           ],
         ),

@@ -31,9 +31,10 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          FlutterMap(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            FlutterMap(
             mapController: _mapController,
             options: MapOptions(
               initialCenter: LatLng(MapConfig.defaultLatitude, MapConfig.defaultLongitude),
@@ -60,9 +61,10 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ],
           ),
-          _buildSearchBar(),
-          _buildLegend(),
-        ],
+            _buildSearchBar(),
+            _buildLegend(),
+          ],
+        ),
       ),
     );
   }

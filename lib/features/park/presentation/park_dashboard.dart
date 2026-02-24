@@ -31,39 +31,48 @@ class _ParkDashboardState extends State<ParkDashboard> {
         final incidents = controller.incidents;
         final wildlife = controller.dashboardData?['wildlifePopulations'] ?? [];
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildStatsGrid(stats),
-              const SizedBox(height: 16),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               _buildActivePatrols(),
-              const SizedBox(height: 16),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               _buildWildlifeStatus(wildlife),
-              const SizedBox(height: 16),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               _buildIncidents(incidents),
             ],
           ),
         );
       },
     );
+      },
+    );
   }
 
   Widget _buildStatsGrid(Map<String, dynamic>? stats) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.5,
-      children: [
-        _StatCard(title: 'Active Patrols', value: '${stats?['activePatrols'] ?? 0}', color: const Color(0xFF00AAFF)),
-        _StatCard(title: 'Wildlife Species', value: '${stats?['wildlifeSpecies'] ?? 0}', color: const Color(0xFF00CC66)),
-        _StatCard(title: 'Incidents', value: '${stats?['incidentsCount'] ?? 0}', color: const Color(0xFFFF3366)),
-        _StatCard(title: 'Parks', value: '${stats?['parks'] ?? 0}', color: const Color(0xFFFFAA00)),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = constraints.maxWidth > 600 ? 4 : 2;
+        final aspectRatio = constraints.maxWidth > 600 ? 1.2 : 1.5;
+        return GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: constraints.maxWidth * 0.03,
+          mainAxisSpacing: constraints.maxWidth * 0.03,
+          childAspectRatio: aspectRatio,
+          children: [
+            _StatCard(title: 'Active Patrols', value: '${stats?['activePatrols'] ?? 0}', color: const Color(0xFF00AAFF)),
+            _StatCard(title: 'Wildlife Species', value: '${stats?['wildlifeSpecies'] ?? 0}', color: const Color(0xFF00CC66)),
+            _StatCard(title: 'Incidents', value: '${stats?['incidentsCount'] ?? 0}', color: const Color(0xFFFF3366)),
+            _StatCard(title: 'Parks', value: '${stats?['parks'] ?? 0}', color: const Color(0xFFFFAA00)),
+          ],
+        );
+      },
     );
   }
 

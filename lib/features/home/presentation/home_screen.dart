@@ -45,8 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           final stats = controller.dashboardData?['stats'];
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+          return SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -56,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 16),
                 _buildFarmSection(),
               ],
+            ),
             ),
           );
         },
