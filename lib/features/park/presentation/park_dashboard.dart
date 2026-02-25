@@ -31,25 +31,72 @@ class _ParkDashboardState extends State<ParkDashboard> {
         final incidents = controller.incidents;
         final wildlife = controller.dashboardData?['wildlifePopulations'] ?? [];
 
-        return SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        return Scaffold(
+          body: Column(
             children: [
-              _buildStatsGrid(stats),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              _buildActivePatrols(),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              _buildWildlifeStatus(wildlife),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              _buildIncidents(incidents),
+              SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+                  child: _buildHeader(),
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildStatsGrid(stats),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                      _buildActivePatrols(),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                      _buildWildlifeStatus(wildlife),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                      _buildIncidents(incidents),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         );
       },
     );
-      },
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [const Color(0xFF00AAFF).withOpacity(0.2), const Color(0xFF00AAFF).withOpacity(0.05)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF00AAFF).withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF00AAFF).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.pets, color: Color(0xFF00AAFF), size: 24),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('KUBE-Park', style: TextStyle(color: Color(0xFF00AAFF), fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('Wildlife Conservation & Anti-Poaching', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -117,7 +164,6 @@ class _ParkDashboardState extends State<ParkDashboard> {
   }
 
   Widget _buildIncidents(List<dynamic> incidents) {
-
     return _SectionCard(
       title: 'RECENT INCIDENTS',
       icon: Icons.report_problem,

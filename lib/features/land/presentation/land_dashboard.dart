@@ -31,25 +31,72 @@ class _LandDashboardState extends State<LandDashboard> {
         final changes = controller.changes;
         final zones = controller.dashboardData?['zones'] ?? [];
 
-        return SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        return Scaffold(
+          body: Column(
             children: [
-              _buildStatsGrid(stats),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              _buildDegradationAlerts(changes),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              _buildLandZones(zones),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              _buildVegetationHealth(),
+              SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+                  child: _buildHeader(),
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildStatsGrid(stats),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                      _buildDegradationAlerts(changes),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                      _buildLandZones(zones),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                      _buildVegetationHealth(),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         );
       },
     );
-      },
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [const Color(0xFF00CC66).withOpacity(0.2), const Color(0xFF00CC66).withOpacity(0.05)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF00CC66).withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF00CC66).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.landscape, color: Color(0xFF00CC66), size: 24),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('KUBE-Land', style: TextStyle(color: Color(0xFF00CC66), fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('Landscape Monitoring & Degradation Detection', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -77,7 +124,6 @@ class _LandDashboardState extends State<LandDashboard> {
   }
 
   Widget _buildDegradationAlerts(List<dynamic> changes) {
-
     return _SectionCard(
       title: 'DEGRADATION ALERTS',
       icon: Icons.warning_amber,
@@ -96,7 +142,6 @@ class _LandDashboardState extends State<LandDashboard> {
   }
 
   Widget _buildLandZones(List<dynamic> zones) {
-
     return _SectionCard(
       title: 'LAND ZONES',
       icon: Icons.landscape,

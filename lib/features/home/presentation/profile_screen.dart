@@ -49,80 +49,80 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            const SizedBox(height: 16),
-            Text(
-              '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              user?.email ?? '',
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF00AAFF).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(20),
+              const SizedBox(height: 16),
+              Text(
+                '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-              child: Text(
-                user?.role.name.toUpperCase() ?? 'USER',
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF00AAFF)),
+              const SizedBox(height: 4),
+              Text(
+                user?.email ?? '',
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
               ),
-            ),
-            const SizedBox(height: 24),
-            _buildInfoCard(
-              title: 'Account Information',
-              items: [
-                _InfoItem(icon: Icons.email, label: 'Email', value: user?.email ?? 'N/A'),
-                _InfoItem(icon: Icons.badge, label: 'Role', value: user?.role.name ?? 'N/A'),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildInfoCard(
-              title: 'Active Services',
-              items: user?.services.map((service) => 
-                _InfoItem(
-                  icon: _getServiceIcon(service.name),
-                  label: _getServiceLabel(service.name),
-                  value: 'Active',
-                  valueColor: const Color(0xFF00CC66),
-                )
-              ).toList() ?? [],
-            ),
-            const SizedBox(height: 16),
-            _buildActionCard(
-              title: 'Settings',
-              items: [
-                _ActionItem(icon: Icons.notifications, label: 'Notifications', onTap: () {}),
-                _ActionItem(icon: Icons.language, label: 'Language', onTap: () {}),
-                _ActionItem(icon: Icons.security, label: 'Security', onTap: () {}),
-                _ActionItem(icon: Icons.help, label: 'Help & Support', onTap: () {}),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  await authController.logout();
-                  if (context.mounted) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF3366),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00AAFF).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text('Logout', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text(
+                  user?.role.name.toUpperCase() ?? 'USER',
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF00AAFF)),
+                ),
               ),
-            ),
-            ),
-          ],
+              const SizedBox(height: 24),
+              _buildInfoCard(
+                title: 'Account Information',
+                items: [
+                  _InfoItem(icon: Icons.email, label: 'Email', value: user?.email ?? 'N/A'),
+                  _InfoItem(icon: Icons.badge, label: 'Role', value: user?.role.name ?? 'N/A'),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildInfoCard(
+                title: 'Active Services',
+                items: user?.services.map((service) => 
+                  _InfoItem(
+                    icon: _getServiceIcon(service.name),
+                    label: _getServiceLabel(service.name),
+                    value: 'Active',
+                    valueColor: const Color(0xFF00CC66),
+                  )
+                ).toList() ?? [],
+              ),
+              const SizedBox(height: 16),
+              _buildActionCard(
+                title: 'Settings',
+                items: [
+                  _ActionItem(icon: Icons.notifications, label: 'Notifications', onTap: () {}),
+                  _ActionItem(icon: Icons.language, label: 'Language', onTap: () {}),
+                  _ActionItem(icon: Icons.security, label: 'Security', onTap: () {}),
+                  _ActionItem(icon: Icons.help, label: 'Help & Support', onTap: () {}),
+                ],
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await authController.logout();
+                    if (context.mounted) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFF3366),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Logout', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
