@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 class ApiService {
   // Using Render hosted backend - works on all devices!
-  static const String baseUrl = 'https://kube-systems.onrender.com/api';
+  static const String baseUrl = 'https://kube-systems-qv16.onrender.com/api';
   
   static const Duration timeout = Duration(seconds: 30); // Increased for cloud server
 
